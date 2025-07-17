@@ -55,6 +55,12 @@ class AdManager: ObservableObject {
         completion(false) // Simulate failure for now
     }
     
+    func unlockOrderSlots() {
+        // This method is called when user completes a rewarded ad
+        // It should increment the order limit in PremiumManager
+        PremiumManager.shared.unlockOrderSlots()
+    }
+    
     // MARK: - Ad Status
     
     func shouldShowAds() -> Bool {

@@ -23,6 +23,8 @@ struct PlacesListView: View {
     @State private var errorMessage = ""
     @State private var selectedPlace: Place?
     @State private var isRefreshing = false
+    @State private var placeToDelete: Place?
+    @State private var showingDeleteAlert = false
     
     var body: some View {
         NavigationView {
@@ -78,6 +80,16 @@ struct PlacesListView: View {
                 Button("OK") { }
             } message: {
                 Text(errorMessage)
+            }
+            .alert("Delete Place", isPresented: $showingDeleteAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    deletePlace()
+                }
+            } message: {
+                if let place = placeToDelete {
+                    Text("Are you sure you want to delete '\(place.name ?? "Unknown Place")'? This will also delete all orders associated with this place.")
+                }
             }
         }
     }
@@ -144,6 +156,9 @@ struct PlacesListView: View {
                 ForEach(places) { place in
                     PlaceCardView(place: place) {
                         selectedPlace = place
+                    } onDelete: {
+                        placeToDelete = place
+                        showingDeleteAlert = true
                     }
                     .transition(.scale.combined(with: .opacity))
                 }
@@ -154,9 +169,21 @@ struct PlacesListView: View {
         .refreshable {
             await refreshPlacesAsync()
         }
-        .sheet(item: $selectedPlace) { place in
-            PlaceDetailView(place: place)
-        }
+        .background(
+            NavigationLink(
+                destination: Group {
+                    if let place = selectedPlace {
+                        PlaceDetailView(place: place)
+                    }
+                },
+                isActive: Binding(
+                    get: { selectedPlace != nil },
+                    set: { if !$0 { selectedPlace = nil } }
+                )
+            ) {
+                EmptyView()
+            }
+        )
     }
     
     private func refreshPlaces() {
@@ -170,11 +197,24 @@ struct PlacesListView: View {
         // Simulate refresh
         try? await Task.sleep(nanoseconds: 1000000000) // 1 second
     }
+    
+    private func deletePlace() {
+        guard let place = placeToDelete else { return }
+        
+        do {
+            try DataStore.shared.deletePlace(place)
+            placeToDelete = nil
+        } catch {
+            errorMessage = "Failed to delete place: \(error.localizedDescription)"
+            showingError = true
+        }
+    }
 }
 
 struct PlaceCardView: View {
     let place: Place
     let onTap: () -> Void
+    let onDelete: () -> Void
     
     @State private var isPressed = false
     @State private var isHovered = false
@@ -276,6 +316,11 @@ struct PlaceCardView: View {
                 isPressed = pressing
             }
         }, perform: {})
+        .contextMenu {
+            Button("Delete Place", role: .destructive) {
+                onDelete()
+            }
+        }
     }
 }
 

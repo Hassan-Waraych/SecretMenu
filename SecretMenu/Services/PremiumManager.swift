@@ -75,6 +75,10 @@ class PremiumManager: ObservableObject {
     
     // MARK: - Ad Unlock System
     
+    var canUnlockMoreOrders: Bool {
+        return canUnlockWithAd()
+    }
+    
     func canUnlockWithAd() -> Bool {
         guard !isPremiumUser else { return false }
         
@@ -83,6 +87,16 @@ class PremiumManager: ObservableObject {
             return !calendar.isDate(lastUnlock, inSameDayAs: Date())
         }
         return true
+    }
+    
+    func unlockOrderSlots() {
+        guard canUnlockWithAd() else { return }
+        
+        unlockedOrderSlots += 2
+        lastAdUnlockDate = Date()
+        
+        saveUnlockedSlots()
+        saveLastAdUnlockDate()
     }
     
     func unlockOrderSlotsWithAd() {
