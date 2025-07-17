@@ -10,11 +10,13 @@ import SwiftUI
 @main
 struct SecretMenuApp: App {
     @StateObject private var dataStore = DataStore.shared
+    @StateObject private var themeManager = ThemeManager.shared
 
     var body: some Scene {
         WindowGroup {
             MainTabView()
                 .environment(\.managedObjectContext, dataStore.viewContext)
+                .preferredColorScheme(themeManager.getColorScheme())
         }
     }
 }

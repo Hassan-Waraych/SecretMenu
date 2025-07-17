@@ -6,25 +6,48 @@
 //
 
 import Foundation
+import StoreKit
 
 @MainActor
 class PremiumManager: ObservableObject {
     static let shared = PremiumManager()
     
+    // MARK: - Product Identifiers
+    private let premiumProductId = "com.secretmenu.premium"
+    
+    // MARK: - Published Properties
     @Published var isPremiumUser: Bool = false
     @Published var freePlaceLimit: Int = 3
     @Published var freeOrderLimit: Int = 5
     @Published var unlockedOrderSlots: Int = 0
     @Published var lastAdUnlockDate: Date?
+    @Published var products: [Product] = []
+    @Published var purchaseInProgress: Bool = false
+    @Published var restoreInProgress: Bool = false
     
+    // MARK: - Private Properties
     private let userDefaults = UserDefaults.standard
     private let premiumKey = "isPremiumUser"
     private let unlockedSlotsKey = "unlockedOrderSlots"
     private let lastAdUnlockKey = "lastAdUnlockDate"
+    private var updateListenerTask: Task<Void, Error>?
     
     private init() {
         loadPremiumStatus()
         loadUnlockedSlots()
+        loadLastAdUnlockDate()
+        
+        // Start listening for transactions
+        updateListenerTask = listenForTransactions()
+        
+        // Load products
+        Task {
+            await loadProducts()
+        }
+    }
+    
+    deinit {
+        updateListenerTask?.cancel()
     }
     
     // MARK: - Premium Status
@@ -109,46 +132,125 @@ class PremiumManager: ObservableObject {
         saveLastAdUnlockDate()
     }
     
-    // MARK: - StoreKit Integration (Placeholder)
+    // MARK: - StoreKit Integration
     
-    func purchasePremium() async {
-        // TODO: Implement StoreKit purchase in Phase 6
-        // For now, just simulate premium purchase
-        isPremiumUser = true
-        savePremiumStatus()
+    func loadProducts() async {
+        do {
+            let productIds = Set([premiumProductId])
+            products = try await Product.products(for: productIds)
+        } catch {
+            print("Failed to load products: \(error)")
+        }
     }
     
-    func restorePurchases() async {
-        // TODO: Implement StoreKit restore in Phase 6
-        // For now, just load saved premium status
-        loadPremiumStatus()
+    func purchasePremium() async -> Bool {
+        guard let product = products.first(where: { $0.id == premiumProductId }) else {
+            print("Premium product not found")
+            return false
+        }
+        
+        purchaseInProgress = true
+        defer { purchaseInProgress = false }
+        
+        do {
+            let result = try await product.purchase()
+            
+            switch result {
+            case .success(let verification):
+                // Check whether the transaction is verified
+                switch verification {
+                case .verified(let transaction):
+                    // Deliver content to the user
+                    await deliverPurchase(transaction)
+                    return true
+                case .unverified:
+                    // Transaction failed verification
+                    print("Transaction failed verification")
+                    return false
+                }
+            case .userCancelled:
+                print("User cancelled purchase")
+                return false
+            case .pending:
+                print("Purchase pending")
+                return false
+            @unknown default:
+                print("Unknown purchase result")
+                return false
+            }
+        } catch {
+            print("Purchase failed: \(error)")
+            return false
+        }
+    }
+    
+    func restorePurchases() async -> Bool {
+        restoreInProgress = true
+        defer { restoreInProgress = false }
+        
+        do {
+            try await AppStore.sync()
+            return true
+        } catch {
+            print("Failed to restore purchases: \(error)")
+            return false
+        }
+    }
+    
+    private func deliverPurchase(_ transaction: Transaction) async {
+        // Verify the transaction is for our premium product
+        guard transaction.productID == premiumProductId else { return }
+        
+        // Update premium status
+        isPremiumUser = true
+        savePremiumStatus()
+        
+        // Finish the transaction
+        await transaction.finish()
+    }
+    
+    private func listenForTransactions() -> Task<Void, Error> {
+        return Task.detached {
+            for await result in Transaction.updates {
+                await self.handleTransactionResult(result)
+            }
+        }
+    }
+    
+    private func handleTransactionResult(_ result: VerificationResult<Transaction>) async {
+        switch result {
+        case .verified(let transaction):
+            await deliverPurchase(transaction)
+        case .unverified:
+            print("Transaction failed verification")
+        }
     }
     
     // MARK: - Private Methods
     
-    private func loadPremiumStatus() {
+    func loadPremiumStatus() {
         isPremiumUser = userDefaults.bool(forKey: premiumKey)
     }
     
-    private func savePremiumStatus() {
+    func savePremiumStatus() {
         userDefaults.set(isPremiumUser, forKey: premiumKey)
     }
     
-    private func loadUnlockedSlots() {
+    func loadUnlockedSlots() {
         unlockedOrderSlots = userDefaults.integer(forKey: unlockedSlotsKey)
     }
     
-    private func saveUnlockedSlots() {
+    func saveUnlockedSlots() {
         userDefaults.set(unlockedOrderSlots, forKey: unlockedSlotsKey)
     }
     
-    private func loadLastAdUnlockDate() {
+    func loadLastAdUnlockDate() {
         if let dateData = userDefaults.object(forKey: lastAdUnlockKey) as? Date {
             lastAdUnlockDate = dateData
         }
     }
     
-    private func saveLastAdUnlockDate() {
+    func saveLastAdUnlockDate() {
         userDefaults.set(lastAdUnlockDate, forKey: lastAdUnlockKey)
     }
 } 
