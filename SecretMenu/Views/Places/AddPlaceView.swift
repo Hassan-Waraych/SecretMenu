@@ -120,29 +120,9 @@ struct PopularPlaceRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 16) {
-                // Icon with gradient background
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.blue.opacity(0.1), .purple.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 50, height: 50)
-                    
-                    Image(systemName: place.iconName)
-                        .font(.title3)
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.blue, .purple],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                }
-                .scaleEffect(isPressed ? 0.9 : 1.0)
+                // Brand Icon
+                BrandIconView(place: place, size: 50)
+                    .scaleEffect(isPressed ? 0.9 : 1.0)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(place.name)

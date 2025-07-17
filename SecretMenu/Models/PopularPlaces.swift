@@ -9,23 +9,27 @@ import Foundation
 
 struct PopularPlace {
     let name: String
-    let iconName: String // SF Symbol name
+    let brandImageName: String? // Brand Image Name
     let keywords: [String]
+    
+    var hasBrandImage: Bool {
+        return brandImageName != nil
+    }
 }
 
 struct PopularPlaces {
     static let places: [PopularPlace] = [
-        PopularPlace(name: "Starbucks", iconName: "cup.and.saucer.fill", keywords: ["coffee", "latte", "frappuccino", "espresso", "cafe", "drink", "beverage"]),
-        PopularPlace(name: "Chipotle", iconName: "tortilla", keywords: ["burrito", "bowl", "mexican", "guac", "chipotle"]),
-        PopularPlace(name: "Dunkin'", iconName: "cup.and.saucer.fill", keywords: ["coffee", "donut", "doughnut", "latte", "espresso", "drink", "beverage"]),
-        PopularPlace(name: "McDonald's", iconName: "flame.fill", keywords: ["burger", "fries", "fast food", "mcdonalds", "big mac"]),
-        PopularPlace(name: "Subway", iconName: "leaf.fill", keywords: ["sandwich", "sub", "healthy", "fresh"]),
-        PopularPlace(name: "Taco Bell", iconName: "tortilla", keywords: ["taco", "burrito", "mexican", "fast food"]),
-        PopularPlace(name: "Tim Hortons", iconName: "cup.and.saucer.fill", keywords: ["coffee", "donut", "latte", "espresso", "canada"]),
-        PopularPlace(name: "Chick-fil-A", iconName: "bird.fill", keywords: ["chicken", "sandwich", "nuggets", "fast food"]),
-        PopularPlace(name: "Burger King", iconName: "flame.fill", keywords: ["burger", "fries", "fast food", "whopper"]),
-        PopularPlace(name: "Wendy's", iconName: "flame.fill", keywords: ["burger", "fries", "fast food"]),
-        PopularPlace(name: "Panera", iconName: "cup.and.saucer.fill", keywords: ["bakery", "cafe", "sandwich", "soup", "bread"]),
+        PopularPlace(name: "Starbucks", brandImageName: "starbucks", keywords: ["coffee", "latte", "frappuccino", "espresso", "cafe", "drink", "beverage"]),
+        PopularPlace(name: "Chipotle", brandImageName: "chipotle", keywords: ["burrito", "bowl", "mexican", "guac", "chipotle"]),
+        PopularPlace(name: "Dunkin'", brandImageName:  "dunkin", keywords: ["coffee", "donut", "doughnut", "latte", "espresso", "drink", "beverage"]),
+        PopularPlace(name: "McDonald's", brandImageName: "mcdonalds", keywords: ["burger", "fries", "fast food", "mcdonalds", "big mac"]),
+        PopularPlace(name: "Subway", brandImageName: "subway", keywords: ["sandwich", "sub", "healthy", "fresh"]),
+        PopularPlace(name: "Taco Bell", brandImageName: "tacobell", keywords: ["taco", "burrito", "mexican", "fast food"]),
+        PopularPlace(name: "Tim Hortons", brandImageName: "timhortons", keywords: ["coffee", "donut", "latte", "espresso", "canada"]),
+        PopularPlace(name: "Chick-fil-A", brandImageName: "chickfila", keywords: ["chicken", "sandwich", "nuggets", "fast food"]),
+        PopularPlace(name: "Burger King", brandImageName: "burgerking", keywords: ["burger", "fries", "fast food", "whopper"]),
+        PopularPlace(name: "Wendy's", brandImageName: "wendys", keywords: ["burger", "fries", "fast food"]),
+        PopularPlace(name: "Panera", brandImageName: "panera", keywords: ["bakery", "cafe", "sandwich", "soup", "bread"]),
         // ...add more as needed
     ]
     

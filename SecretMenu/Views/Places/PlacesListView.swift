@@ -179,12 +179,8 @@ struct PlaceCardView: View {
     @State private var isPressed = false
     @State private var isHovered = false
     
-    private var placeIcon: String {
-        // Get icon from popular places or use default
-        if let popularPlace = PopularPlaces.getPlaceByName(place.name ?? "Unknown Place") {
-            return popularPlace.iconName
-        }
-        return "building.2.fill"
+    private var popularPlace: PopularPlace? {
+        return PopularPlaces.getPlaceByName(place.name ?? "Unknown Place")
     }
     
     private var orderCount: Int {
@@ -193,29 +189,37 @@ struct PlaceCardView: View {
     
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 16) {                // Icon with gradient background
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.blue.opacity(0.1), .purple.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+            VStack(spacing: 16) {
+                // Brand Icon or Default Icon
+                if let popularPlace = popularPlace, let brandImageName = popularPlace.brandImageName {
+                    // Use brand image
+                    BrandIconView(place: popularPlace, size: 60)
+                        .scaleEffect(isPressed ? 0.9 : 1.0)
+                } else {
+                    // Use default system symbol
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.blue.opacity(0.1), .purple.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
-                        .frame(width: 60, height: 60)
-                    
-                    Image(systemName: placeIcon)
-                        .font(.title2)
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.blue, .purple],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                            .frame(width: 60, height: 60)
+                        
+                        Image(systemName: "building.2.fill")
+                            .font(.title2)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.blue, .purple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
+                    }
+                    .scaleEffect(isPressed ? 0.9 : 1.0)
                 }
-                .scaleEffect(isPressed ? 0.9 : 1.0)
                 
                 VStack(spacing: 4) {
                     Text(place.name ?? "Unknown Place")

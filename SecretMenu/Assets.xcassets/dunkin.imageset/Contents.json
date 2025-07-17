@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "dunkin-donuts-logo-png_seeklogo-597997.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "dunkin-donuts-logo-png_seeklogo-597997 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "dunkin-donuts-logo-png_seeklogo-597997 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
