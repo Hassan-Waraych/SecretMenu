@@ -41,7 +41,7 @@ struct PlaceDetailView: View {
     @State private var showingError = false
     @State private var errorMessage = ""
     @State private var animateIn = false
-    @State private var buttonScale: CGFloat = 1.0
+
     @State private var orderAnimationOffset: CGFloat = 50
     
     init(place: Place) {
@@ -79,26 +79,7 @@ struct PlaceDetailView: View {
         }
         .navigationTitle(place.name ?? "Place")
         .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { showingAddOrder = true }) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.blue)
-                        .scaleEffect(buttonScale)
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                buttonScale = 0.8
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                    buttonScale = 1.0
-                                }
-                            }
-                        }
-                }
-            }
-        }
+
         .sheet(isPresented: $showingAddOrder, onDismiss: {
             // Force refresh of orders when sheet is dismissed
             print("Sheet dismissed, refreshing orders...")
@@ -225,17 +206,6 @@ struct PlaceDetailView: View {
                 )
                 .cornerRadius(25)
                 .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
-            }
-            .scaleEffect(buttonScale)
-            .onTapGesture {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    buttonScale = 0.95
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        buttonScale = 1.0
-                    }
-                }
             }
             .padding(.horizontal, 20)
             .padding(.top, 10)

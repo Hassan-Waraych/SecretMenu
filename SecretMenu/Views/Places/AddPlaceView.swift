@@ -104,6 +104,9 @@ struct AddPlaceView: View {
         do {
             _ = try DataStore.shared.createPlace(name: trimmedName)
             dismiss()
+        } catch DataStoreError.placeAlreadyExists {
+            // Silently ignore duplicate places - just dismiss
+            dismiss()
         } catch {
             errorMessage = error.localizedDescription
             showingError = true

@@ -33,6 +33,14 @@ class DataStore: ObservableObject {
     // MARK: - Place Operations
     
     func createPlace(name: String) throws -> Place {
+        // Check if place already exists
+        let existingPlaces = try fetchPlaces()
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if existingPlaces.contains(where: { $0.name?.lowercased() == trimmedName.lowercased() }) {
+            throw DataStoreError.placeAlreadyExists
+        }
+        
         // Check total place limit (3ces total for free users)
         if !premiumManager.canAddUnlimitedPlaces {
             let totalPlacesCount = try getTotalPlacesCount()
@@ -43,7 +51,7 @@ class DataStore: ObservableObject {
         
         let place = Place(context: viewContext)
         place.id = UUID()
-        place.name = name
+        place.name = trimmedName
         place.createdAt = Date()
         
         try viewContext.save()
@@ -181,6 +189,7 @@ class DataStore: ObservableObject {
 enum DataStoreError: LocalizedError {
     case orderLimitReached
     case placeLimitReached
+    case placeAlreadyExists
     case saveFailed
     case fetchFailed
     
@@ -190,6 +199,8 @@ enum DataStoreError: LocalizedError {
             return "You've reached the free order limit. Upgrade to Premium for unlimited orders."
         case .placeLimitReached:
             return "You've reached the free place limit (3laces). Upgrade to Premium for unlimited places."
+        case .placeAlreadyExists:
+            return "A place with this name already exists."
         case .saveFailed:
             return "Failed to save data. Please try again."
         case .fetchFailed:

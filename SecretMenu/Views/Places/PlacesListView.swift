@@ -62,16 +62,7 @@ struct PlacesListView: View {
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: refreshPlaces) {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.title2)
-                            .foregroundColor(.secondary)
-                            .rotationEffect(.degrees(isRefreshing ? 360 : 0))
-                            .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isRefreshing)
-                    }
-                    .disabled(isRefreshing)
-                }
+
             }
             .sheet(isPresented: $showingAddPlace) {
                 AddPlaceView()
