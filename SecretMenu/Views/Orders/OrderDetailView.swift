@@ -70,8 +70,7 @@ struct OrderDetailView: View {
                 .padding(.top, 20)
             }
         }
-        .navigationTitle(order.title ?? "Order")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {

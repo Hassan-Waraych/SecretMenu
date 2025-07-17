@@ -132,11 +132,6 @@ struct PopularPlaceRow: View {
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
-                    
-                    Text(place.keywords.joined(separator: ", "))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
                 }
                 
                 Spacer()

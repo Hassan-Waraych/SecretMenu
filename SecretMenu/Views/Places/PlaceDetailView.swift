@@ -77,8 +77,7 @@ struct PlaceDetailView: View {
                 }
             }
         }
-        .navigationTitle(place.name ?? "Place")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
 
         .sheet(isPresented: $showingAddOrder, onDismiss: {
             // Force refresh of orders when sheet is dismissed
@@ -183,9 +182,61 @@ struct PlaceDetailView: View {
         .padding()
     }
     
+    private var headerSection: some View {
+        VStack(spacing: 20) {
+            // Place icon with animation
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [.blue.opacity(0.1), .purple.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 80, height: 80)
+                
+                if let popularPlace = PopularPlaces.getPlaceByName(place.name ?? ""),
+                   let brandImageName = popularPlace.brandImageName {
+                    Image(brandImageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                        .scaleEffect(animateIn ? 1 : 0.5)
+                        .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.2), value: animateIn)
+                } else {
+                    Image(systemName: "building.2.fill")
+                        .font(.title)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.blue, .purple],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .scaleEffect(animateIn ? 1 : 0.5)
+                        .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.2), value: animateIn)
+                }
+            }
+            
+            VStack(spacing: 8) {
+                Text(place.name ?? "Unknown Place")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.blue)
+            }
+        }
+        .padding(.vertical, 20)
+    }
+    
     private var ordersList: some View {
         VStack(spacing: 20) {
-            // Add Order button at top
+            // Header section with place info
+            headerSection
+                .opacity(animateIn ? 1 : 0)
+                .offset(y: animateIn ? 0 : -30)
+            
+            // Add Order button
             Button(action: { showingAddOrder = true }) {
                 HStack(spacing: 12) {
                     Image(systemName: "plus.circle.fill")
