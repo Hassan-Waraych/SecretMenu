@@ -56,12 +56,7 @@ struct SettingsView: View {
                             .offset(y: animateAppInfo ? 0 : 50)
                             .opacity(animateAppInfo ? 1 : 0)
                         
-                        // Debug Section (Development Only)
-                        #if DEBUG
-                        debugSection
-                            .offset(y: animateAppInfo ? 0 : 50)
-                            .opacity(animateAppInfo ? 1 : 0)
-                        #endif
+                        // Debug Section removed - depends on AdManager integration
                         
                         Spacer(minLength: 100)
                     }
