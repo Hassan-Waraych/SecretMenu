@@ -14,7 +14,7 @@ struct SettingsView: View {
     @State private var showingUpgradeView = false
     @State private var showingAboutView = false
     @State private var showingPrivacyPolicy = false
-    // @State private var showingDebugMenu = false  // Removed - depends on AdManager
+    @State private var showingDebugMenu = false
     @StateObject private var themeManager = ThemeManager.shared
     
     // Animation states
@@ -57,7 +57,10 @@ struct SettingsView: View {
                             .offset(y: animateAppInfo ? 0 : 50)
                             .opacity(animateAppInfo ? 1 : 0)
                         
-                        // Debug Section removed - depends on AdManager integration
+                        // Debug Section
+                        debugSection
+                            .offset(y: animateAppInfo ? 0 : 60)
+                            .opacity(animateAppInfo ? 1 : 0)
                         
                         Spacer(minLength: 100)
                     }
@@ -76,7 +79,9 @@ struct SettingsView: View {
             .sheet(isPresented: $showingPrivacyPolicy) {
                 PrivacyPolicyView()
             }
-            // Debug menu removed - depends on AdManager integration
+            .sheet(isPresented: $showingDebugMenu) {
+                DebugMenuView()
+            }
             .onAppear {
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
                     animatePremiumCard = true
@@ -536,7 +541,61 @@ struct SettingsView: View {
     
     // MARK: - Debug Section
     
-    // Debug section removed - depends on AdManager integration
+    private var debugSection: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Image(systemName: "ladybug.fill")
+                    .font(.title2)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.orange, .red],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                Text("Developer")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Spacer()
+            }
+            
+            Button(action: { showingDebugMenu = true }) {
+                HStack(spacing: 12) {
+                    Image(systemName: "ladybug")
+                        .font(.title3)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Debug Menu")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+                        
+                        Text("Test premium features and data")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemGray6))
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+        )
+    }
     
     // MARK: - Helper Methods
     
