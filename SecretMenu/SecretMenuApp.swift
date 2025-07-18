@@ -11,12 +11,26 @@ import SwiftUI
 struct SecretMenuApp: App {
     @StateObject private var dataStore = DataStore.shared
     @StateObject private var themeManager = ThemeManager.shared
+    @StateObject private var onboardingManager = OnboardingManager.shared
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environment(\.managedObjectContext, dataStore.viewContext)
-                .preferredColorScheme(themeManager.getColorScheme())
+            ZStack {
+                if onboardingManager.hasCompletedOnboarding {
+                    MainTabView()
+                        .environment(\.managedObjectContext, dataStore.viewContext)
+                        .preferredColorScheme(themeManager.getColorScheme())
+                        .overlay(
+                            Group {
+                                if onboardingManager.isShowingTutorial {
+                                    TutorialOverlayView()
+                                }
+                            }
+                        )
+                } else {
+                    OnboardingView()
+                }
+            }
         }
     }
 }

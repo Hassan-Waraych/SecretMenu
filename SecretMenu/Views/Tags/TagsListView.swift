@@ -47,6 +47,7 @@ class TagsManager: ObservableObject {
 
 struct TagsListView: View {
     @EnvironmentObject private var premiumManager: PremiumManager
+    @StateObject private var onboardingManager = OnboardingManager.shared
     // TODO: Re-enable when ad integration is fixed
     // @EnvironmentObject private var adManager: AdManager
     @StateObject private var tagsManager = TagsManager()
@@ -102,6 +103,13 @@ struct TagsListView: View {
             }
             .sheet(isPresented: $showingAddTag, onDismiss: {
                 tagsManager.refresh()
+                
+                // Check if tutorial should advance
+                if onboardingManager.currentTutorialStep == .addTag && !tagsManager.tags.isEmpty {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        onboardingManager.nextTutorialStep()
+                    }
+                }
             }) {
                 AddTagView()
             }

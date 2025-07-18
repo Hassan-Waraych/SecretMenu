@@ -34,6 +34,7 @@ class PlaceOrdersManager: ObservableObject {
 
 struct PlaceDetailView: View {
     let place: Place
+    @StateObject private var onboardingManager = OnboardingManager.shared
     // TODO: Re-enable when ad integration is fixed
     // @EnvironmentObject private var adManager: AdManager
     @StateObject private var ordersManager: PlaceOrdersManager
@@ -85,6 +86,13 @@ struct PlaceDetailView: View {
             // Force refresh of orders when sheet is dismissed
             print("Sheet dismissed, refreshing orders...")
             ordersManager.refresh()
+            
+            // Check if tutorial should advance
+            if onboardingManager.currentTutorialStep == .addOrder && !ordersManager.orders.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    onboardingManager.nextTutorialStep()
+                }
+            }
         }) {
             AddOrderView(place: place)
         }

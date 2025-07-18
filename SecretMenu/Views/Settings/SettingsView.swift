@@ -16,6 +16,7 @@ struct SettingsView: View {
     @State private var showingPrivacyPolicy = false
     @State private var showingDebugMenu = false
     @StateObject private var themeManager = ThemeManager.shared
+    @StateObject private var onboardingManager = OnboardingManager.shared
     
     // Animation states
     @State private var animatePremiumCard = false
@@ -559,35 +560,67 @@ struct SettingsView: View {
                 Spacer()
             }
             
-            Button(action: { showingDebugMenu = true }) {
-                HStack(spacing: 12) {
-                    Image(systemName: "ladybug")
-                        .font(.title3)
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Debug Menu")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
+            VStack(spacing: 12) {
+                Button(action: { showingDebugMenu = true }) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "ladybug")
+                            .font(.title3)
                         
-                        Text("Test premium features and data")
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Debug Menu")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                            
+                            Text("Test premium features and data")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemGray6))
+                    )
                 }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray6))
-                )
+                .buttonStyle(PlainButtonStyle())
+                
+                Button(action: { onboardingManager.resetOnboarding() }) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.title3)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Reset Onboarding")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                            
+                            Text("Show onboarding again")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemGray6))
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
             }
-            .buttonStyle(PlainButtonStyle())
         }
         .padding(20)
         .background(
