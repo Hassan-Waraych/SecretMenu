@@ -44,6 +44,7 @@ struct AddTagView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
+                .dismissKeyboardOnTap()
                 
                 VStack(spacing: 24) {
                     // Tag Icon Preview

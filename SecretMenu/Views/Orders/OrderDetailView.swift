@@ -32,6 +32,7 @@ struct OrderDetailView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
+            .dismissKeyboardOnTap()
             
             ScrollView {
                 VStack(spacing: 24) {
@@ -581,6 +582,7 @@ struct EditOrderView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
+                .dismissKeyboardOnTap()
                 
                 ScrollView {
                     VStack(spacing: 24) {

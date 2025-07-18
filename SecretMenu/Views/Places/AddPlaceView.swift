@@ -33,6 +33,7 @@ struct AddPlaceView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
+                .dismissKeyboardOnTap()
                 
                 VStack(spacing: 0) {
                     // Search Bar
