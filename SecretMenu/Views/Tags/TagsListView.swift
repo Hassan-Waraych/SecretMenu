@@ -47,7 +47,8 @@ class TagsManager: ObservableObject {
 
 struct TagsListView: View {
     @EnvironmentObject private var premiumManager: PremiumManager
-    @EnvironmentObject private var adManager: AdManager
+    // TODO: Re-enable when ad integration is fixed
+    // @EnvironmentObject private var adManager: AdManager
     @StateObject private var tagsManager = TagsManager()
     
     @State private var showingAddTag = false
@@ -79,11 +80,12 @@ struct TagsListView: View {
                             .offset(y: animateIn ? 0 : 50)
                     }
                     
+                    // TODO: Re-enable when ad integration is fixed
                     // Banner ad at bottom
-                    if adManager.shouldShowAds() && adManager.isBannerAdLoaded {
-                        BannerAdView()
-                            .frame(height: 50)
-                    }
+                    // if adManager.shouldShowAds() && adManager.isBannerAdLoaded {
+                    //     BannerAdView()
+                    //         .frame(height: 50)
+                    // }
                 }
             }
             .navigationTitle("Tags")
@@ -334,7 +336,8 @@ struct TagCardView: View {
 struct TagOrdersView: View {
     let tag: Tag
     let orders: [Order]
-    @EnvironmentObject private var adManager: AdManager
+    // TODO: Re-enable when ad integration is fixed
+    // @EnvironmentObject private var adManager: AdManager
     
     @State private var animateIn = false
     
@@ -359,11 +362,12 @@ struct TagOrdersView: View {
                         .offset(y: animateIn ? 0 : 50)
                 }
                 
+                // TODO: Re-enable when ad integration is fixed
                 // Banner ad at bottom
-                if adManager.shouldShowAds() && adManager.isBannerAdLoaded {
-                    BannerAdView()
-                        .frame(height: 50)
-                }
+                // if adManager.shouldShowAds() && adManager.isBannerAdLoaded {
+                //     BannerAdView()
+                //         .frame(height: 50)
+                // }
             }
         }
         .navigationTitle("\(tag.name ?? "Tag") Orders")
@@ -472,5 +476,6 @@ extension Color {
     TagsListView()
         .environment(\.managedObjectContext, DataStore.shared.viewContext)
         .environmentObject(PremiumManager.shared)
-        .environmentObject(AdManager.shared)
+        // TODO: Re-enable when ad integration is fixed
+        // .environmentObject(AdManager.shared)
 } 

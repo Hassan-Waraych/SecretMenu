@@ -208,13 +208,14 @@ struct UpgradeView: View {
                     gradient: [.orange, .red]
                 )
                 
-                FeatureRow(
-                    icon: "xmark.circle",
-                    title: "No Ads",
-                    description: "Remove all banner and rewarded ads",
-                    isPremium: true,
-                    gradient: [.gray, .secondary]
-                )
+                // TODO: Re-enable when ad integration is fixed
+                // FeatureRow(
+                //     icon: "xmark.circle",
+                //     title: "No Ads",
+                //     description: "Remove all banner and rewarded ads",
+                //     isPremium: true,
+                //     gradient: [.gray, .secondary]
+                // )
             }
         }
         .padding(24)
@@ -260,12 +261,13 @@ struct UpgradeView: View {
                     gradient: [.orange, .yellow]
                 )
                 
-                LimitRow(
-                    icon: "play.rectangle",
-                    text: "Banner & Rewarded Ads",
-                    isLimit: true,
-                    gradient: [.gray, .secondary]
-                )
+                // TODO: Re-enable when ad integration is fixed
+                // LimitRow(
+                //     icon: "play.rectangle",
+                //     text: "Banner & Rewarded Ads",
+                //     isLimit: true,
+                //     gradient: [.gray, .secondary]
+                // )
             }
         }
         .padding(20)

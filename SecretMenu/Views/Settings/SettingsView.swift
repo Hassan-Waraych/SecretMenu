@@ -9,7 +9,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var premiumManager: PremiumManager
-    @EnvironmentObject var adManager: AdManager
+    // TODO: Re-enable when ad integration is fixed
+    // @EnvironmentObject var adManager: AdManager
     @State private var showingUpgradeView = false
     @State private var showingAboutView = false
     @State private var showingPrivacyPolicy = false
@@ -586,5 +587,6 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environmentObject(PremiumManager.shared)
-        .environmentObject(AdManager.shared)
+        // TODO: Re-enable when ad integration is fixed
+        // .environmentObject(AdManager.shared)
 } 

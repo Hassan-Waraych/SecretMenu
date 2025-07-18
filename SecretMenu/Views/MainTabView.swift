@@ -9,7 +9,8 @@ import SwiftUI
 
 struct MainTabView: View {
     @StateObject private var premiumManager = PremiumManager.shared
-    @StateObject private var adManager = AdManager.shared
+    // TODO: Re-enable when ad integration is fixed
+    // @StateObject private var adManager = AdManager.shared
     
     var body: some View {
         TabView {
@@ -29,7 +30,8 @@ struct MainTabView: View {
                 }
         }
         .environmentObject(premiumManager)
-        .environmentObject(adManager)
+                    // TODO: Re-enable when ad integration is fixed
+            // .environmentObject(adManager)
     }
 }
 

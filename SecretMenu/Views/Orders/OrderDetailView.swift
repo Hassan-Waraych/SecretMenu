@@ -11,7 +11,8 @@ import CoreData
 struct OrderDetailView: View {
     let order: Order
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var adManager: AdManager
+    // TODO: Re-enable when ad integration is fixed
+    // @EnvironmentObject private var adManager: AdManager
     
     @State private var showingEditOrder = false
     @State private var showingDeleteAlert = false
@@ -784,5 +785,6 @@ struct EditOrderView: View {
         OrderDetailView(order: Order())
     }
     .environment(\.managedObjectContext, DataStore.shared.viewContext)
-    .environmentObject(AdManager.shared)
+            // TODO: Re-enable when ad integration is fixed
+        // .environmentObject(AdManager.shared)
 } 

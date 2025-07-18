@@ -34,7 +34,8 @@ class PlaceOrdersManager: ObservableObject {
 
 struct PlaceDetailView: View {
     let place: Place
-    @EnvironmentObject private var adManager: AdManager
+    // TODO: Re-enable when ad integration is fixed
+    // @EnvironmentObject private var adManager: AdManager
     @StateObject private var ordersManager: PlaceOrdersManager
     
     @State private var showingAddOrder = false
@@ -70,11 +71,12 @@ struct PlaceDetailView: View {
                         .offset(y: animateIn ? 0 : orderAnimationOffset)
                 }
                 
+                // TODO: Re-enable when ad integration is fixed
                 // Banner ad at bottom
-                if adManager.shouldShowAds() && adManager.isBannerAdLoaded {
-                    BannerAdView()
-                        .frame(height: 50)
-                }
+                // if adManager.shouldShowAds() && adManager.isBannerAdLoaded {
+                //     BannerAdView()
+                //         .frame(height: 50)
+                // }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -432,5 +434,6 @@ struct OrderRowView: View {
         PlaceDetailView(place: Place())
     }
     .environment(\.managedObjectContext, DataStore.shared.viewContext)
-    .environmentObject(AdManager.shared)
+    // TODO: Re-enable when ad integration is fixed
+    // .environmentObject(AdManager.shared)
 } 
