@@ -13,7 +13,7 @@ struct SettingsView: View {
     @State private var showingUpgradeView = false
     @State private var showingAboutView = false
     @State private var showingPrivacyPolicy = false
-    @State private var showingDebugMenu = false
+    // @State private var showingDebugMenu = false  // Removed - depends on AdManager
     @StateObject private var themeManager = ThemeManager.shared
     
     // Animation states
@@ -80,9 +80,7 @@ struct SettingsView: View {
             .sheet(isPresented: $showingPrivacyPolicy) {
                 PrivacyPolicyView()
             }
-            .sheet(isPresented: $showingDebugMenu) {
-                DebugMenuView()
-            }
+            // Debug menu removed - depends on AdManager integration
             .onAppear {
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
                     animatePremiumCard = true
@@ -542,40 +540,7 @@ struct SettingsView: View {
     
     // MARK: - Debug Section
     
-    #if DEBUG
-    private var debugSection: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Image(systemName: "ladybug")
-                    .font(.title2)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.orange, .red],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                Text("Development")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                Spacer()
-            }
-            
-            supportRow(
-                icon: "ladybug",
-                title: "Debug Menu",
-                gradient: [.orange, .red],
-                action: { showingDebugMenu = true }
-            )
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
-        )
-    }
-    #endif
+    // Debug section removed - depends on AdManager integration
     
     // MARK: - Helper Methods
     
