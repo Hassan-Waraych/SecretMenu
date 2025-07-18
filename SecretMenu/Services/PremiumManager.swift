@@ -76,9 +76,7 @@ class PremiumManager: ObservableObject {
         return isPremiumUser
     }
     
-    var canAddUnlimitedPhotos: Bool {
-        return isPremiumUser
-    }
+
     
     var canUseCustomThemes: Bool {
         return isPremiumUser
@@ -115,7 +113,7 @@ class PremiumManager: ObservableObject {
     func unlockOrderSlots() {
         guard canUnlockWithAd() else { return }
         
-        unlockedOrderSlots += 2
+        unlockedOrderSlots += 1
         lastAdUnlockDate = Date()
         
         saveUnlockedSlots()
@@ -125,7 +123,7 @@ class PremiumManager: ObservableObject {
     func unlockOrderSlotsWithAd() {
         guard canUnlockWithAd() else { return }
         
-        unlockedOrderSlots += 2
+        unlockedOrderSlots += 1
         lastAdUnlockDate = Date()
         
         saveUnlockedSlots()

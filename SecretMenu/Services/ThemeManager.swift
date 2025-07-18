@@ -12,7 +12,7 @@ import SwiftUI
 class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
     
-    @Published var currentTheme: AppTheme = .system
+    @Published var currentTheme: AppTheme = .light
     
     private let userDefaults = UserDefaults.standard
     private let themeKey = "selectedAppTheme"
@@ -45,6 +45,9 @@ class ThemeManager: ObservableObject {
         if let themeString = userDefaults.string(forKey: themeKey),
            let theme = AppTheme(rawValue: themeString) {
             currentTheme = theme
+        } else {
+            // Default to light theme for free users
+            currentTheme = .light
         }
     }
     

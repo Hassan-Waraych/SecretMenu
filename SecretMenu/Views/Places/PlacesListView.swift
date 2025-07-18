@@ -25,6 +25,11 @@ struct PlacesListView: View {
     @State private var isRefreshing = false
     @State private var placeToDelete: Place?
     @State private var showingDeleteAlert = false
+    @State private var showingAdUnlockView = false
+    @State private var giftIconScale: CGFloat = 1.0
+    @State private var giftIconRotation: Double = 0
+    @State private var showSuccessNotification = false
+    @State private var successNotificationOffset: CGFloat = -200
     
     var body: some View {
         NavigationView {
@@ -36,6 +41,41 @@ struct PlacesListView: View {
                 )
                 .ignoresSafeArea()
                 
+                // Success notification overlay
+                if showSuccessNotification {
+                    VStack {
+                        HStack(spacing: 12) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.green)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("🎉 +1 Order Slot Unlocked!")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                                
+                                Text("Come back tomorrow for another daily gift! 🎁")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                        }
+                        .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.systemBackground))
+                                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                        )
+                        .padding(.horizontal, 16)
+                        .offset(y: successNotificationOffset)
+                        
+                        Spacer()
+                    }
+                    .zIndex(1)
+                }
+                
                 VStack(spacing: 0) {
                     if places.isEmpty {
                         emptyStateView
@@ -46,13 +86,32 @@ struct PlacesListView: View {
                     // Banner ad at bottom
                     if adManager.shouldShowAds() && adManager.isBannerAdLoaded {
                         BannerAdView()
-                            .frame(height: 50)
+                            .frame(maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 8)
                     }
                 }
             }
             .navigationTitle("Places")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    // Animated gift icon for ad unlock
+                    if adManager.shouldShowAds() && adManager.canShowRewardedAd() {
+                        Button(action: {
+                            showingAdUnlockView = true
+                        }) {
+                            Image(systemName: "gift.fill")
+                                .font(.title2)
+                                .foregroundColor(.orange)
+                                .scaleEffect(giftIconScale)
+                                .rotationEffect(.degrees(giftIconRotation))
+                                .animation(.easeInOut(duration: 0.3), value: giftIconScale)
+                                .animation(.easeInOut(duration: 0.5), value: giftIconRotation)
+                        }
+                    }
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddPlace = true }) {
                         Image(systemName: "plus.circle.fill")
@@ -61,11 +120,42 @@ struct PlacesListView: View {
                             .scaleEffect(1.1)
                     }
                 }
-                
-
             }
             .sheet(isPresented: $showingAddPlace) {
                 AddPlaceView()
+            }
+            .sheet(isPresented: $showingAdUnlockView) {
+                AdUnlockView()
+                    .onDisappear {
+                        // Show success notification when AdUnlockView is dismissed
+                        if adManager.canShowRewardedAd() == false {
+                            // Ad was watched successfully, show notification
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showSuccessNotification = true
+                                withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                                    successNotificationOffset = 0
+                                }
+                                
+                                // Hide notification after 4 seconds
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+                                    withAnimation(.easeInOut(duration: 0.5)) {
+                                        successNotificationOffset = -200
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        showSuccessNotification = false
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)) { _ in
+                // Refresh ad status when data changes
+                adManager.refreshAdStatus()
+            }
+            .onAppear {
+                adManager.refreshAdStatus()
+                startGiftAnimation()
             }
             .alert("Error", isPresented: $showingError) {
                 Button("OK") { }
@@ -198,6 +288,34 @@ struct PlacesListView: View {
         } catch {
             errorMessage = "Failed to delete place: \(error.localizedDescription)"
             showingError = true
+        }
+    }
+    
+    private func startGiftAnimation() {
+        // Start continuous animation for gift icon
+        Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
+            withAnimation(.easeInOut(duration: 0.3)) {
+                giftIconScale = 1.2
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    giftIconScale = 1.0
+                }
+            }
+            
+            withAnimation(.easeInOut(duration: 0.5)) {
+                giftIconRotation = 15
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    giftIconRotation = -15
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    giftIconRotation = 0
+                }
+            }
         }
     }
 }

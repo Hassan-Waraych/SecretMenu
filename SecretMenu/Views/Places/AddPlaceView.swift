@@ -14,6 +14,7 @@ struct AddPlaceView: View {
     @State private var searchText = ""
     @State private var showingError = false
     @State private var errorMessage = ""
+    @State private var showingUpgradeView = false
     
     private var filteredPlaces: [PopularPlace] {
         if searchText.isEmpty {
@@ -94,6 +95,9 @@ struct AddPlaceView: View {
             } message: {
                 Text(errorMessage)
             }
+            .sheet(isPresented: $showingUpgradeView) {
+                UpgradeView()
+            }
         }
     }
     
@@ -101,13 +105,18 @@ struct AddPlaceView: View {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { return }
         
-        do {
-            _ = try DataStore.shared.createPlace(name: trimmedName)
+        let result = DataStore.shared.createPlace(name: trimmedName)
+        
+        switch result {
+        case .success(_):
             dismiss()
-        } catch DataStoreError.placeAlreadyExists {
+        case .alreadyExists:
             // Silently ignore duplicate places - just dismiss
             dismiss()
-        } catch {
+        case .limitReached:
+            // Show paywall instead of error
+            showingUpgradeView = true
+        case .error(let error):
             errorMessage = error.localizedDescription
             showingError = true
         }

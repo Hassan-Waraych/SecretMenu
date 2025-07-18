@@ -107,11 +107,7 @@ struct AboutView: View {
                             .fontWeight(.semibold)
                         
                         VStack(alignment: .leading, spacing: 12) {
-                            TipRow(
-                                icon: "camera",
-                                title: "Add Photos",
-                                description: "Take photos of your favorite orders to remember exactly how they should look."
-                            )
+
                             
                             TipRow(
                                 icon: "tag",

@@ -10,6 +10,7 @@ import CoreData
 
 struct DebugMenuView: View {
     @EnvironmentObject var premiumManager: PremiumManager
+    @EnvironmentObject var adManager: AdManager
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -38,13 +39,13 @@ struct DebugMenuView: View {
                     }
                     
                     Button(action: {
-                        premiumManager.unlockedOrderSlots += 2
+                        premiumManager.unlockedOrderSlots += 1
                         premiumManager.saveUnlockedSlots()
                     }) {
                         HStack {
                             Image(systemName: "plus.circle")
                                 .foregroundColor(.green)
-                            Text("Add 2 Order Slots")
+                            Text("Add 1 Order Slot")
                         }
                     }
                     
@@ -64,18 +65,59 @@ struct DebugMenuView: View {
                 
                 Section {
                     HStack {
-                        Image(systemName: "calendar")
-                            .foregroundColor(.purple)
-                        Text("Last Ad Unlock Date")
+                        Text("Banner Ad Status")
                         Spacer()
-                        if let lastUnlock = premiumManager.lastAdUnlockDate {
-                            Text(lastUnlock.formatted(date: .abbreviated, time: .shortened))
-                                .font(.caption)
+                        Text(adManager.isBannerAdLoaded ? "Loaded" : "Not Loaded")
+                            .foregroundColor(adManager.isBannerAdLoaded ? .green : .red)
+                    }
+                    
+                    HStack {
+                        Text("Rewarded Ad Status")
+                        Spacer()
+                        Text(adManager.isRewardedAdLoaded ? "Loaded" : "Not Loaded")
+                            .foregroundColor(adManager.isRewardedAdLoaded ? .green : .red)
+                    }
+                    
+                    HStack {
+                        Text("Can Unlock with Ad")
+                        Spacer()
+                        Text(adManager.canShowRewardedAd() ? "Yes" : "No")
+                            .foregroundColor(adManager.canShowRewardedAd() ? .green : .red)
+                    }
+                    
+                    HStack {
+                        Text("Unlocked Slots")
+                        Spacer()
+                        Text("\(premiumManager.unlockedOrderSlots)")
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if premiumManager.lastAdUnlockDate != nil {
+                        HStack {
+                            Text("Last Ad Unlock")
+                            Spacer()
+                            Text(premiumManager.lastAdUnlockDate?.formatted(date: .abbreviated, time: .shortened) ?? "Never")
                                 .foregroundColor(.secondary)
-                        } else {
-                            Text("Never")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    Button(action: {
+                        adManager.loadRewardedAd()
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundColor(.blue)
+                            Text("Reload Rewarded Ad")
+                        }
+                    }
+                    
+                    Button(action: {
+                        adManager.forceRefreshAds()
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.clockwise.circle.fill")
+                                .foregroundColor(.orange)
+                            Text("Force Refresh All Ads")
                         }
                     }
                     
@@ -90,7 +132,7 @@ struct DebugMenuView: View {
                         }
                     }
                 } header: {
-                    Text("Ad System")
+                    Text("Ad Status")
                 }
                 
                 Section {
