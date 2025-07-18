@@ -32,30 +32,34 @@ class DataStore: ObservableObject {
     
     // MARK: - Place Operations
     
-    func createPlace(name: String) throws -> Place {
-        // Check if place already exists
-        let existingPlaces = try fetchPlaces()
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        if existingPlaces.contains(where: { $0.name?.lowercased() == trimmedName.lowercased() }) {
-            throw DataStoreError.placeAlreadyExists
-        }
-        
-        // Check total place limit (3ces total for free users)
-        if !premiumManager.canAddUnlimitedPlaces {
-            let totalPlacesCount = try getTotalPlacesCount()
-            if totalPlacesCount >= premiumManager.freePlaceLimit {
-                throw DataStoreError.placeLimitReached
+    func createPlace(name: String) -> PlaceCreationResult {
+        do {
+            // Check if place already exists
+            let existingPlaces = try fetchPlaces()
+            let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if existingPlaces.contains(where: { $0.name?.lowercased() == trimmedName.lowercased() }) {
+                return .alreadyExists
             }
+            
+            // Check total place limit (3ces total for free users)
+            if !premiumManager.canAddUnlimitedPlaces {
+                let totalPlacesCount = try getTotalPlacesCount()
+                if totalPlacesCount >= premiumManager.freePlaceLimit {
+                    return .limitReached
+                }
+            }
+            
+            let place = Place(context: viewContext)
+            place.id = UUID()
+            place.name = trimmedName
+            place.createdAt = Date()
+            
+            try viewContext.save()
+            return .success(place)
+        } catch {
+            return .error(error)
         }
-        
-        let place = Place(context: viewContext)
-        place.id = UUID()
-        place.name = trimmedName
-        place.createdAt = Date()
-        
-        try viewContext.save()
-        return place
     }
     
     func fetchPlaces() throws -> [Place] {
@@ -83,26 +87,30 @@ class DataStore: ObservableObject {
     
     // MARK: - Order Operations
     
-    func createOrder(title: String, details: String, place: Place, tags: [String] = [], photoPath: String? = nil) throws -> Order {
-        // Check free limit for orders
-        if !premiumManager.canAddUnlimitedOrders {
-            let orderCount = try getOrderCount()
-            if orderCount >= premiumManager.totalOrderLimit {
-                throw DataStoreError.orderLimitReached
+    func createOrder(title: String, details: String, place: Place, tags: [String] = [], photoPath: String? = nil) -> OrderCreationResult {
+        do {
+            // Check free limit for orders
+            if !premiumManager.canAddUnlimitedOrders {
+                let orderCount = try getOrderCount()
+                if orderCount >= premiumManager.totalOrderLimit {
+                    return .limitReached
+                }
             }
+            
+            let order = Order(context: viewContext)
+            order.id = UUID()
+            order.title = title
+            order.details = details
+            order.place = place
+            order.tags = tags
+            order.photoPath = photoPath
+            order.createdAt = Date()
+            
+            try viewContext.save()
+            return .success(order)
+        } catch {
+            return .error(error)
         }
-        
-        let order = Order(context: viewContext)
-        order.id = UUID()
-        order.title = title
-        order.details = details
-        order.place = place
-        order.tags = tags
-        order.photoPath = photoPath
-        order.createdAt = Date()
-        
-        try viewContext.save()
-        return order
     }
     
     func fetchOrders(for place: Place? = nil) throws -> [Order] {
@@ -207,4 +215,19 @@ enum DataStoreError: LocalizedError {
             return "Failed to load data. Please try again."
         }
     }
+}
+
+// MARK: - Custom Result Types for Paywall Triggers
+
+enum PlaceCreationResult {
+    case success(Place)
+    case limitReached
+    case alreadyExists
+    case error(Error)
+}
+
+enum OrderCreationResult {
+    case success(Order)
+    case limitReached
+    case error(Error)
 } 
