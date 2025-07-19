@@ -658,13 +658,13 @@ struct SettingsView: View {
     }
     
     private func rateApp() {
-        if let url = URL(string: "https://apps.apple.com/app/id1234567890") {
+        if let url = URL(string: "https://apps.apple.com/app/id6748836992") {
             UIApplication.shared.open(url)
         }
     }
     
     private func shareApp() {
-        let appUrl = "https://apps.apple.com/app/id1234567890"
+        let appUrl = "https://apps.apple.com/app/id6748836992"
         let text = "Check out SecretMenu - Your personal vault for custom food & drink orders! \(appUrl)"
         
         let activityVC = UIActivityViewController(activityItems: [text], applicationActivities: nil)
