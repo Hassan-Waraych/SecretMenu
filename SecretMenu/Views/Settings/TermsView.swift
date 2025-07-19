@@ -181,7 +181,7 @@ struct TermsView: View {
                         content: """
                         If you have any questions about these Terms of Service, please contact us:
                         
-                        **Email**: legal@secretmenu.app
+                        **Email**: secretmenu.contact@gmail.com
                         **App**: Through the Settings > About section
                         
                         We will respond to your inquiry within a reasonable timeframe.

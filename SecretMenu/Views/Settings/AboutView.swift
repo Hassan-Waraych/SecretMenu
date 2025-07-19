@@ -190,14 +190,15 @@ struct AboutView: View {
     // MARK: - Actions
     
     private func contactSupport() {
-        if let url = URL(string: "mailto:support@secretmenu.app") {
+        if let url = URL(string: "mailto:secretmenu.contact@gmail.com") {
             UIApplication.shared.open(url)
         }
     }
     
     private func showHelp() {
-        // TODO: Show help/FAQ view
-        print("Show help")
+        if let url = URL(string: "https://www.notion.so/SecretMenu-Support-235c344a805080c0a02cec32a80c2c88?source=copy_link") {
+            UIApplication.shared.open(url)
+        }
     }
     
     private func rateApp() {

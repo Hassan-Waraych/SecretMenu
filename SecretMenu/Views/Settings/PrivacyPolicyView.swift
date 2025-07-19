@@ -145,7 +145,7 @@ struct PrivacyPolicyView: View {
                         content: """
                         If you have any questions about this Privacy Policy, please contact us:
                         
-                        **Email**: privacy@secretmenu.app
+                        **Email**: secretmenu.contact@gmail.com
                         **App**: Through the Settings > About section
                         
                         We will respond to your inquiry within a reasonable timeframe.
