@@ -58,10 +58,12 @@ struct SettingsView: View {
                             .offset(y: animateAppInfo ? 0 : 50)
                             .opacity(animateAppInfo ? 1 : 0)
                         
+#if DEBUG
                         // Debug Section
                         debugSection
                             .offset(y: animateAppInfo ? 0 : 60)
                             .opacity(animateAppInfo ? 1 : 0)
+#endif
                         
                         Spacer(minLength: 100)
                     }
@@ -80,9 +82,11 @@ struct SettingsView: View {
             .sheet(isPresented: $showingPrivacyPolicy) {
                 PrivacyPolicyView()
             }
+#if DEBUG
             .sheet(isPresented: $showingDebugMenu) {
                 DebugMenuView()
             }
+#endif
             .onAppear {
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
                     animatePremiumCard = true
